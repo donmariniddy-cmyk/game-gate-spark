@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import GameCard from "@/components/GameCard";
 import { games } from "@/data/games";
 import { Zap, Shield, Wifi, WifiOff } from "lucide-react";
-import heroImage from "@/assets/hero-gaming.jpg";
+import heroVideo from "@/assets/hero-drift.mp4";
 
 const Index = () => {
   return (
@@ -13,9 +13,13 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-30"
-          style={{ backgroundImage: `url(${heroImage})` }}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-50"
+          src={heroVideo}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/70 to-background" />
         <div className="relative z-10 container mx-auto px-6 text-center pt-20">
