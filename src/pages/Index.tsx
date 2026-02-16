@@ -5,6 +5,7 @@ import GameCard from "@/components/GameCard";
 import { games } from "@/data/games";
 import { Zap, Shield, Wifi, WifiOff } from "lucide-react";
 import heroVideo from "@/assets/hero-drift.mp4";
+import heroBmw from "@/assets/hero-bmw-racing.jpg";
 
 const Index = () => {
   return (
@@ -13,13 +14,10 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-50"
-          src={heroVideo}
+        <img
+          src={heroBmw}
+          alt="Two modified BMW cars racing each other at night"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/70 to-background" />
         <div className="relative z-10 container mx-auto px-6 text-center pt-20">
