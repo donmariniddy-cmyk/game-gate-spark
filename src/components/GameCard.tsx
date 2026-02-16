@@ -6,21 +6,21 @@ interface GameCardProps {
   icon: string;
   slug: string;
   color: string;
+  cover: string;
 }
 
-const GameCard = ({ title, description, icon, slug, color }: GameCardProps) => {
+const GameCard = ({ title, description, slug, cover }: GameCardProps) => {
   return (
     <Link
       to={`/games/${slug}`}
       className="group relative bg-card border border-border rounded-lg overflow-hidden hover:neon-border transition-all duration-300"
     >
-      <div
-        className="h-48 flex items-center justify-center text-6xl"
-        style={{
-          background: `linear-gradient(135deg, hsl(${color} / 0.2), hsl(var(--card)))`,
-        }}
-      >
-        <span className="group-hover:scale-110 transition-transform duration-300">{icon}</span>
+      <div className="h-48 overflow-hidden">
+        <img
+          src={cover}
+          alt={title}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+        />
       </div>
       <div className="p-5">
         <h3 className="font-heading text-lg font-bold text-foreground mb-2">{title}</h3>
