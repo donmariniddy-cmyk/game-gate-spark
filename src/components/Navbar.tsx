@@ -18,9 +18,12 @@ const Navbar = () => {
           <Link to="/games" className="text-muted-foreground hover:text-primary transition-colors font-medium">
             Games
           </Link>
-          <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors font-medium">
+          <Link to="/pricing" className="text-muted-foreground hover:text-primary transition-colors font-medium">
             Pricing
-          </a>
+          </Link>
+          <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors font-medium">
+            Contact
+          </Link>
           <Link
             to="/pricing"
             className="bg-primary text-primary-foreground font-heading font-bold px-6 py-2 rounded-md hover:shadow-[0_0_20px_hsl(120_100%_50%/0.5)] transition-all text-sm tracking-wider"
