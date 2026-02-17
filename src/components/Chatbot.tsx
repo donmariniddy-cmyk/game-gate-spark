@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { X, Send, Loader2 } from "lucide-react";
+import wrxIcon from "@/assets/wrx-chatbot-icon.png";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -40,9 +41,7 @@ const Chatbot = () => {
         body: JSON.stringify({ messages: allMessages }),
       });
 
-      if (!resp.ok || !resp.body) {
-        throw new Error("Failed to connect");
-      }
+      if (!resp.ok || !resp.body) throw new Error("Failed to connect");
 
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
@@ -89,7 +88,6 @@ const Chatbot = () => {
     }
   };
 
-  // Simple markdown bold rendering
   const renderText = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, i) => {
@@ -102,41 +100,62 @@ const Chatbot = () => {
 
   return (
     <>
-      {/* Floating button */}
+      {/* Floating WRX button */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:shadow-[0_0_25px_hsl(120_100%_50%/0.5)] transition-all animate-bounce"
+          className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full overflow-hidden shadow-[0_0_25px_rgba(0,100,255,0.6)] hover:shadow-[0_0_40px_rgba(0,100,255,0.9)] transition-all hover:scale-110 ring-2 ring-blue-500/60"
           aria-label="Open chat"
+          style={{ animation: "wrx-pulse 2s ease-in-out infinite" }}
         >
-          <MessageCircle className="w-6 h-6" />
+          <img src={wrxIcon} alt="Chat with us" className="w-full h-full object-cover" />
         </button>
       )}
 
-      {/* Chat window */}
+      {/* Chat window - WRX themed */}
       {open && (
-        <div className="fixed bottom-4 right-4 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[500px] max-h-[calc(100vh-2rem)] flex flex-col rounded-2xl border border-border bg-background shadow-2xl overflow-hidden">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground">
-            <div className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5" />
-              <span className="font-heading font-bold text-sm tracking-wider">NAAMS Play Assistant</span>
+        <div className="fixed bottom-4 right-4 z-50 w-[370px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-2rem)] flex flex-col rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(0,100,255,0.4)] border border-blue-500/30"
+          style={{ background: "linear-gradient(180deg, hsl(220 30% 8%) 0%, hsl(220 25% 5%) 100%)" }}
+        >
+          {/* Header - WRX racing style */}
+          <div
+            className="flex items-center justify-between px-4 py-3"
+            style={{ background: "linear-gradient(135deg, hsl(220 80% 25%) 0%, hsl(220 90% 15%) 100%)", borderBottom: "2px solid hsl(45 100% 50%)" }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-yellow-400/70 shadow-[0_0_10px_rgba(234,179,8,0.4)]">
+                <img src={wrxIcon} alt="WRX Assistant" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <span className="font-heading font-bold text-sm tracking-wider text-white block leading-tight">NAAMS Play</span>
+                <span className="text-[10px] tracking-widest text-yellow-400/80 font-medium">⚡ ONLINE NOW</span>
+              </div>
             </div>
-            <button onClick={() => setOpen(false)} className="hover:opacity-80" aria-label="Close chat">
+            <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white transition-colors" aria-label="Close chat">
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+          {/* Messages area */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3" style={{ background: "linear-gradient(180deg, hsl(220 25% 7%) 0%, hsl(220 20% 4%) 100%)" }}>
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                {msg.role === "assistant" && (
+                  <div className="w-7 h-7 rounded-full overflow-hidden mr-2 mt-1 flex-shrink-0 ring-1 ring-blue-500/40">
+                    <img src={wrxIcon} alt="" className="w-full h-full object-cover" />
+                  </div>
+                )}
                 <div
-                  className={`max-w-[80%] px-3 py-2 rounded-xl text-sm leading-relaxed ${
+                  className={`max-w-[78%] px-3 py-2 rounded-xl text-sm leading-relaxed ${
                     msg.role === "user"
-                      ? "bg-primary text-primary-foreground rounded-br-sm"
-                      : "bg-secondary text-secondary-foreground rounded-bl-sm"
+                      ? "rounded-br-sm text-white"
+                      : "rounded-bl-sm text-blue-50/90"
                   }`}
+                  style={
+                    msg.role === "user"
+                      ? { background: "linear-gradient(135deg, hsl(220 80% 35%) 0%, hsl(220 90% 25%) 100%)", border: "1px solid hsl(45 100% 50% / 0.3)" }
+                      : { background: "hsl(220 20% 12%)", border: "1px solid hsl(220 40% 20%)" }
+                  }
                 >
                   {renderText(msg.content)}
                 </div>
@@ -144,26 +163,31 @@ const Chatbot = () => {
             ))}
             {isLoading && messages[messages.length - 1]?.role === "user" && (
               <div className="flex justify-start">
-                <div className="bg-secondary text-secondary-foreground px-3 py-2 rounded-xl rounded-bl-sm">
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                <div className="w-7 h-7 rounded-full overflow-hidden mr-2 mt-1 flex-shrink-0 ring-1 ring-blue-500/40">
+                  <img src={wrxIcon} alt="" className="w-full h-full object-cover" />
+                </div>
+                <div className="px-3 py-2 rounded-xl rounded-bl-sm" style={{ background: "hsl(220 20% 12%)", border: "1px solid hsl(220 40% 20%)" }}>
+                  <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Input */}
-          <div className="border-t border-border p-3 flex gap-2">
+          {/* Input - racing stripe accent */}
+          <div className="p-3 flex gap-2" style={{ borderTop: "2px solid hsl(45 100% 50% / 0.4)", background: "hsl(220 25% 8%)" }}>
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
               placeholder="Ask me anything..."
-              className="flex-1 bg-secondary text-foreground text-sm rounded-lg px-3 py-2 outline-none placeholder:text-muted-foreground"
+              className="flex-1 text-sm rounded-lg px-3 py-2 outline-none text-white placeholder:text-blue-300/40"
+              style={{ background: "hsl(220 20% 12%)", border: "1px solid hsl(220 40% 20%)" }}
             />
             <button
               onClick={send}
               disabled={isLoading || !input.trim()}
-              className="bg-primary text-primary-foreground rounded-lg px-3 py-2 disabled:opacity-50 hover:shadow-[0_0_15px_hsl(120_100%_50%/0.4)] transition-all"
+              className="rounded-lg px-3 py-2 disabled:opacity-40 transition-all text-white hover:shadow-[0_0_15px_rgba(234,179,8,0.5)]"
+              style={{ background: "linear-gradient(135deg, hsl(220 80% 35%) 0%, hsl(220 90% 25%) 100%)", border: "1px solid hsl(45 100% 50% / 0.4)" }}
               aria-label="Send message"
             >
               <Send className="w-4 h-4" />
@@ -171,6 +195,13 @@ const Chatbot = () => {
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes wrx-pulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(0,100,255,0.5), 0 0 40px rgba(0,100,255,0.2); }
+          50% { box-shadow: 0 0 30px rgba(0,100,255,0.8), 0 0 60px rgba(0,100,255,0.4); }
+        }
+      `}</style>
     </>
   );
 };
