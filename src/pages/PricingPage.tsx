@@ -30,7 +30,8 @@ const PricingPage = () => {
             <div className="text-center mb-8">
               <span className="font-heading text-sm tracking-widest text-primary">LIFETIME ACCESS</span>
               <div className="mt-4">
-                <span className="font-heading text-7xl font-black neon-text">$20</span>
+                <span className="font-heading text-7xl font-black neon-text">50,000</span>
+                <span className="font-heading text-2xl font-bold text-primary ml-2">TZS</span>
               </div>
               <p className="text-muted-foreground text-sm mt-2">One-time payment</p>
             </div>
@@ -56,7 +57,7 @@ const PricingPage = () => {
               onClick={() => alert("Payment integration coming soon! Enable Lovable Cloud + Stripe to accept payments.")}
             >
               <Zap className="w-5 h-5 inline mr-2" />
-              PAY $20 — GET ACCESS
+              PAY 50,000 TZS — GET ACCESS
             </button>
 
             <p className="text-center text-muted-foreground text-xs mt-4">

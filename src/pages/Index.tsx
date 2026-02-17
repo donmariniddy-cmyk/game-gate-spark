@@ -31,7 +31,7 @@ const Index = () => {
             <span className="neon-text">LIMITS</span>
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            One-time $20 access. No ads, no subscriptions, no internet required.
+            One-time 50,000 TZS access. No ads, no subscriptions, no internet required.
             Premium offline games, forever yours.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -39,7 +39,7 @@ const Index = () => {
               to="/pricing"
               className="bg-primary text-primary-foreground font-heading font-bold px-10 py-4 rounded-md hover:shadow-[0_0_30px_hsl(120_100%_50%/0.5)] transition-all text-lg tracking-wider"
             >
-              GET ACCESS — $20
+              GET ACCESS — 50,000 TZS
             </Link>
             <Link
               to="/games"
@@ -95,7 +95,7 @@ const Index = () => {
           <div className="max-w-lg mx-auto text-center glass rounded-2xl p-12 neon-box">
             <h2 className="font-heading text-3xl font-bold text-foreground mb-4">LIFETIME ACCESS</h2>
             <div className="mb-6">
-              <span className="font-heading text-6xl font-black neon-text">$20</span>
+              <span className="font-heading text-5xl font-black neon-text">50,000 TZS</span>
               <p className="text-muted-foreground mt-2">One-time payment • Forever yours</p>
             </div>
             <ul className="text-left space-y-3 mb-8 text-sm">
