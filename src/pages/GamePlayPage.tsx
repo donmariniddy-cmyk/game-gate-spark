@@ -6,6 +6,7 @@ import SnakeGame from "@/components/games/SnakeGame";
 import TicTacToeGame from "@/components/games/TicTacToeGame";
 import MemoryGame from "@/components/games/MemoryGame";
 import Game2048 from "@/components/games/Game2048";
+import TempleRunGame from "@/components/games/TempleRunGame";
 import { ArrowLeft } from "lucide-react";
 
 const gameComponents: Record<string, React.FC> = {
@@ -13,6 +14,7 @@ const gameComponents: Record<string, React.FC> = {
   "tic-tac-toe": TicTacToeGame,
   memory: MemoryGame,
   "2048": Game2048,
+  "temple-run": TempleRunGame,
 };
 
 const GamePlayPage = () => {

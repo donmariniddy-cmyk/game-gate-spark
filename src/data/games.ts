@@ -13,6 +13,7 @@ import efootballCover from "@/assets/covers/efootball.jpg";
 import nfsCover from "@/assets/covers/nfs-no-limits.jpg";
 import busCover from "@/assets/covers/bus-simulator-ultimate.jpg";
 import ssrCover from "@/assets/covers/ssr.jpg";
+import templeRunCover from "@/assets/covers/temple-run.jpg";
 
 export interface GameInfo {
   title: string;
@@ -159,5 +160,14 @@ export const games: GameInfo[] = [
     color: "300 80% 50%",
     instructions: "Race and customize cars in street competitions!",
     cover: ssrCover,
+  },
+  {
+    title: "Temple Run",
+    description: "Run for your life through ancient temple ruins! Dodge obstacles, collect coins, and survive as long as you can.",
+    icon: "🏃",
+    slug: "temple-run",
+    color: "35 90% 50%",
+    instructions: "Swipe to turn, jump, and slide. Collect coins and powerups. Don't get caught!",
+    cover: templeRunCover,
   },
 ];
