@@ -5,6 +5,7 @@ import GameCard from "@/components/GameCard";
 import { games } from "@/data/games";
 import { Zap, Shield, Wifi, WifiOff } from "lucide-react";
 import heroBmwVideo from "@/assets/hero-bmw-race.mp4";
+import mercedesDrift from "@/assets/mercedes-drift.jpg";
 
 const Index = () => {
   return (
@@ -47,6 +48,24 @@ const Index = () => {
             >
               VIEW GAMES
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Mercedes Drift Scratch Image */}
+      <section className="relative overflow-hidden">
+        <div className="relative">
+          <img
+            src={mercedesDrift}
+            alt="Two Mercedes-Benz AMG drifting side by side"
+            className="w-full h-[60vh] md:h-[70vh] object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/60" />
+          <div className="absolute bottom-8 left-0 right-0 text-center z-10">
+            <p className="font-heading text-xs tracking-[0.3em] text-primary uppercase mb-2">Built Different</p>
+            <h2 className="font-heading text-3xl md:text-5xl font-black text-foreground">
+              UNLEASH THE <span className="neon-text">BEAST</span>
+            </h2>
           </div>
         </div>
       </section>
