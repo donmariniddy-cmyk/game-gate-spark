@@ -6,13 +6,13 @@ import { useState, useEffect, useCallback } from "react";
 import supra from "@/assets/cars/supra.jpg";
 import gtr from "@/assets/cars/gtr.jpg";
 import bmwM4 from "@/assets/cars/bmw-m4.jpg";
-import huracan from "@/assets/cars/huracan.jpg";
+
 import rx7 from "@/assets/cars/rx7.jpg";
 import mustang from "@/assets/cars/mustang.jpg";
 import porsche from "@/assets/cars/porsche.jpg";
 import challenger from "@/assets/cars/challenger.jpg";
 import wrx from "@/assets/cars/wrx.jpg";
-import mclaren from "@/assets/cars/mclaren.jpg";
+
 import nsx from "@/assets/cars/nsx.jpg";
 import rs6 from "@/assets/cars/rs6.jpg";
 
@@ -20,13 +20,13 @@ const cars = [
   { src: supra, name: "Toyota Supra MK4" },
   { src: gtr, name: "Nissan GT-R R35" },
   { src: bmwM4, name: "BMW M4" },
-  { src: huracan, name: "Lamborghini Huracán" },
+  
   { src: rx7, name: "Mazda RX-7 FD" },
   { src: mustang, name: "Ford Mustang GT500" },
   { src: porsche, name: "Porsche 911 GT3 RS" },
   { src: challenger, name: "Dodge Challenger Hellcat" },
   { src: wrx, name: "Subaru WRX STI" },
-  { src: mclaren, name: "McLaren 720S" },
+  
   { src: nsx, name: "Honda NSX" },
   { src: rs6, name: "Audi RS6 Avant" },
 ];
