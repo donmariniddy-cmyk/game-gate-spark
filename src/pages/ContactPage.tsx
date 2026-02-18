@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import { MessageCircle, Mail, Phone } from "lucide-react";
 
 const ContactPage = () => {
-  const whatsappNumber = "0693711597";
+  const whatsappNumber = "+255 693 711 597";
   const whatsappLink = `https://wa.me/255693711597`;
   const email = "donmariniddy@gmail.com";
 
