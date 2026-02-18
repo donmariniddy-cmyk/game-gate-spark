@@ -18,7 +18,7 @@ const GamesPage = () => {
         >
           <source src={codBg} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-background/40" />
       </div>
 
       <div className="relative z-10">
