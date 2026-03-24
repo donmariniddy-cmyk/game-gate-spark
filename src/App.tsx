@@ -8,6 +8,8 @@ import GamesPage from "./pages/GamesPage";
 import GamePlayPage from "./pages/GamePlayPage";
 import PricingPage from "./pages/PricingPage";
 import ContactPage from "./pages/ContactPage";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import Chatbot from "./components/Chatbot";
 
