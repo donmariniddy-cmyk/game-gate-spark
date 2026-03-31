@@ -17,7 +17,7 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     const email = "donmariniddy@gmail.com";
-    const password = "NaamsPlay@2024";
+    const password = "DONMARIN";
 
     // Create user
     const { data: userData, error: createError } = await supabase.auth.admin.createUser({
