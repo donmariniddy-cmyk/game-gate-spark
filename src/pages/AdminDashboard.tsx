@@ -358,18 +358,69 @@ const AdminDashboard = () => {
                       <TableHead>Email</TableHead>
                       <TableHead>Name</TableHead>
                       <TableHead>Joined</TableHead>
+                      <TableHead>Access</TableHead>
+                      <TableHead>Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {profiles.map(p => (
-                      <TableRow key={p.id}>
-                        <TableCell>{p.email}</TableCell>
-                        <TableCell>{p.full_name || "-"}</TableCell>
-                        <TableCell className="text-xs">{new Date(p.created_at).toLocaleDateString()}</TableCell>
-                      </TableRow>
-                    ))}
+                    {profiles.map(p => {
+                      const userGrants = gameAccess.filter(a => a.user_email === p.email);
+                      const granted = userGrants.length > 0;
+                      return (
+                        <TableRow key={p.id}>
+                          <TableCell className="text-xs">{p.email}</TableCell>
+                          <TableCell>{p.full_name || "-"}</TableCell>
+                          <TableCell className="text-xs">{new Date(p.created_at).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <span className={`text-xs px-2 py-1 rounded-full ${granted ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
+                              {granted ? `Unlocked (${userGrants.length})` : "Locked"}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            {granted ? (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={async () => {
+                                  const { error } = await supabase.from("game_access").delete().eq("user_email", p.email);
+                                  if (!error) {
+                                    toast({ title: `Access revoked for ${p.email}` });
+                                    fetchData();
+                                  }
+                                }}
+                              >
+                                <X className="w-4 h-4 text-destructive mr-1" /> Revoke
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                onClick={async () => {
+                                  const { data: { session } } = await supabase.auth.getSession();
+                                  const inserts = games.map(g => ({
+                                    user_email: p.email,
+                                    game_slug: g.slug,
+                                    granted_by: session?.user.id,
+                                  }));
+                                  const { error } = await supabase
+                                    .from("game_access")
+                                    .upsert(inserts, { onConflict: "user_email,game_slug" });
+                                  if (!error) {
+                                    toast({ title: `Access granted for ${p.email}` });
+                                    fetchData();
+                                  } else {
+                                    toast({ title: "Error", description: error.message, variant: "destructive" });
+                                  }
+                                }}
+                              >
+                                <Check className="w-4 h-4 mr-1" /> Grant Access
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                     {profiles.length === 0 && (
-                      <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">No users yet</TableCell></TableRow>
+                      <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">No users yet</TableCell></TableRow>
                     )}
                   </TableBody>
                 </Table>

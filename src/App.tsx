@@ -12,6 +12,8 @@ import BrowserGamesPage from "./pages/BrowserGamesPage";
 import BrowserGamePlayPage from "./pages/BrowserGamePlayPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AuthPage from "./pages/AuthPage";
+import GameAccessGate from "./components/GameAccessGate";
 import NotFound from "./pages/NotFound";
 import Chatbot from "./components/Chatbot";
 
@@ -25,10 +27,11 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/games" element={<GamesPage />} />
-          <Route path="/games/:slug" element={<GamePlayPage />} />
+          <Route path="/games/:slug" element={<GameAccessGate><GamePlayPage /></GameAccessGate>} />
           <Route path="/browser-games" element={<BrowserGamesPage />} />
-          <Route path="/browser-games/:id" element={<BrowserGamePlayPage />} />
+          <Route path="/browser-games/:id" element={<GameAccessGate><BrowserGamePlayPage /></GameAccessGate>} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin" element={<AdminLogin />} />
