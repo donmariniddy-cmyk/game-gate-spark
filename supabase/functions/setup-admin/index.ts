@@ -43,6 +43,12 @@ serve(async (req) => {
       throw new Error("Could not find or create user");
     }
 
+    // Always reset password & confirm email so login works
+    await supabase.auth.admin.updateUserById(userId, {
+      password,
+      email_confirm: true,
+    });
+
     // Assign admin role
     const { error: roleError } = await supabase
       .from("user_roles")
