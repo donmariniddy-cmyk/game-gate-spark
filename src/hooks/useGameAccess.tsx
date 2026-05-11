@@ -21,6 +21,20 @@ export const useGameAccess = () => {
     }
     let active = true;
     (async () => {
+      // Owner/admin always has access — no need to grant themselves
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (roleData) {
+        if (active) {
+          setHasAccess(true);
+          setLoading(false);
+        }
+        return;
+      }
       const { data } = await supabase
         .from("game_access")
         .select("id")
