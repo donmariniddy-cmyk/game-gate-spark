@@ -38,6 +38,69 @@ export type Database = {
         }
         Relationships: []
       }
+      games: {
+        Row: {
+          category: string
+          color: string
+          created_at: string
+          description: string
+          embed_url: string | null
+          icon: string
+          id: string
+          image_url: string | null
+          instructions: string
+          is_active: boolean
+          is_new: boolean
+          is_popular: boolean
+          kind: string
+          rating: number
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          color?: string
+          created_at?: string
+          description?: string
+          embed_url?: string | null
+          icon?: string
+          id?: string
+          image_url?: string | null
+          instructions?: string
+          is_active?: boolean
+          is_new?: boolean
+          is_popular?: boolean
+          kind?: string
+          rating?: number
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          color?: string
+          created_at?: string
+          description?: string
+          embed_url?: string | null
+          icon?: string
+          id?: string
+          image_url?: string | null
+          instructions?: string
+          is_active?: boolean
+          is_new?: boolean
+          is_popular?: boolean
+          kind?: string
+          rating?: number
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payment_requests: {
         Row: {
           amount: number
