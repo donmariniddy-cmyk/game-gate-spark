@@ -8,6 +8,13 @@
       "when": 1793380092113,
       "tag": "0000_tighten_open_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793380556626,
+      "tag": "0001_create_games_catalog",
+      "breakpoints": true
     }
   ]
 }
