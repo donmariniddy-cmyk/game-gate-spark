@@ -52,16 +52,18 @@ const PricingPage = () => {
               ))}
             </ul>
 
-            <button
-              className="w-full bg-primary text-primary-foreground font-heading font-bold py-4 rounded-md hover:shadow-[0_0_30px_hsl(120_100%_50%/0.5)] transition-all tracking-wider text-lg"
-              onClick={() => alert("Payment integration coming soon! Enable Lovable Cloud + Stripe to accept payments.")}
+            <a
+              href={`https://wa.me/255693711597?text=${encodeURIComponent("Hi! I want to pay 50,000 TZS for full NAAMS play access.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-center w-full bg-primary text-primary-foreground font-heading font-bold py-4 rounded-md hover:shadow-[0_0_30px_hsl(120_100%_50%/0.5)] transition-all tracking-wider text-lg"
             >
               <Zap className="w-5 h-5 inline mr-2" />
               PAY 50,000 TZS — GET ACCESS
-            </button>
+            </a>
 
             <p className="text-center text-muted-foreground text-xs mt-4">
-              Secure payment powered by Stripe
+              Opens WhatsApp (+255 693 711 597) for payment details. Send your proof of payment there or to donmariniddy@gmail.com and your access is activated.
             </p>
           </div>
         </div>
