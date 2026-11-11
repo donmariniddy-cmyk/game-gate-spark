@@ -19,6 +19,9 @@ export const useGameAccess = () => {
       setLoading(false);
       return;
     }
+    setLoading(true);
+    setHasAccess(false);
+    const email = user.email;
     let active = true;
     (async () => {
       // Owner/admin always has access — no need to grant themselves
@@ -38,7 +41,7 @@ export const useGameAccess = () => {
       const { data } = await supabase
         .from("game_access")
         .select("id")
-        .eq("user_email", user.email!)
+        .ilike("user_email", email.replace(/[%_]/g, "\\$&"))
         .limit(1);
       if (active) {
         setHasAccess((data?.length ?? 0) > 0);

@@ -1,17 +1,21 @@
 import { useParams, Link } from "react-router-dom";
-import { html5Games } from "@/data/html5Games";
+import { useBrowserGames } from "@/hooks/useCatalog";
+import CatalogStatus from "@/components/CatalogStatus";
 import Navbar from "@/components/Navbar";
 import { ArrowLeft, Star, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const BrowserGamePlayPage = () => {
   const { id } = useParams<{ id: string }>();
-  const game = html5Games.find((g) => g.id === id);
+  const { games: html5Games, isLoading, isError, refetch } = useBrowserGames();
+  const game = html5Games.find((g) => g.id === id || (id === "snake" && g.id === "snake-html5") || (id === "tetris" && g.id === "block-puzzle"));
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState(false);
 
+  useEffect(() => { setLoaded(false); const timer = setTimeout(() => setLoaded(true), 15000); return () => clearTimeout(timer); }, [id]);
+  if (isLoading || isError) return <CatalogStatus loading={isLoading} error={isError} retry={() => void refetch()} />;
   if (!game) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -26,7 +30,7 @@ const BrowserGamePlayPage = () => {
   }
 
   const handleFullscreen = () => {
-    iframeRef.current?.requestFullscreen?.();
+    void iframeRef.current?.requestFullscreen?.().catch(() => {});
   };
 
   return (
@@ -84,6 +88,7 @@ const BrowserGamePlayPage = () => {
             />
           </div>
 
+          <div className="mt-4 flex flex-wrap gap-3"><Button variant="outline" onClick={() => { setLoaded(false); if (iframeRef.current) iframeRef.current.src = game.embedUrl; }}>Reload game</Button><span className="text-muted-foreground text-sm">External games need internet and may include provider advertisements.</span></div>
           <p className="text-muted-foreground text-sm mt-4">{game.description}</p>
         </div>
       </div>

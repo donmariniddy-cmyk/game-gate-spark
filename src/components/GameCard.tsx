@@ -1,3 +1,4 @@
+import { playableSlugs } from "@/lib/catalog";
 import { Link } from "react-router-dom";
 
 interface GameCardProps {
@@ -19,6 +20,7 @@ const GameCard = ({ title, description, slug, cover }: GameCardProps) => {
         <img
           src={cover}
           alt={title}
+          loading="lazy"
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
         />
       </div>
@@ -26,7 +28,7 @@ const GameCard = ({ title, description, slug, cover }: GameCardProps) => {
         <h3 className="font-heading text-lg font-bold text-foreground mb-2">{title}</h3>
         <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
         <div className="mt-4 flex items-center gap-2">
-          <span className="text-xs font-heading text-primary tracking-wider">PLAY NOW →</span>
+          <span className="text-xs font-heading text-primary tracking-wider">{playableSlugs.has(slug) ? "PLAY NOW →" : "VIEW AVAILABILITY →"}</span>
         </div>
       </div>
     </Link>

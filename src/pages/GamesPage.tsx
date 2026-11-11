@@ -1,10 +1,12 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GameCard from "@/components/GameCard";
-import { games } from "@/data/games";
+import { useOfflineGames } from "@/hooks/useCatalog";
+import CatalogStatus from "@/components/CatalogStatus";
 import codBg from "@/assets/cod-bg.mp4";
 
 const GamesPage = () => {
+  const { games, isLoading, isError, refetch } = useOfflineGames();
   return (
     <div className="min-h-screen bg-background relative">
       {/* Background Video */}
@@ -30,7 +32,8 @@ const GamesPage = () => {
             </h1>
             <p className="text-muted-foreground mb-12 max-w-lg">All games work offline. No internet, no ads, no nonsense.</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {games.map((game) => (
+              <CatalogStatus loading={isLoading} error={isError} retry={() => void refetch()} />
+            {games.map((game) => (
                 <GameCard key={game.slug} {...game} />
               ))}
             </div>

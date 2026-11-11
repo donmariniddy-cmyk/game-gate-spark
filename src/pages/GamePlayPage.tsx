@@ -1,7 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { games } from "@/data/games";
+import { useOfflineGames } from "@/hooks/useCatalog";
+import CatalogStatus from "@/components/CatalogStatus";
 import SnakeGame from "@/components/games/SnakeGame";
 import TicTacToeGame from "@/components/games/TicTacToeGame";
 import MemoryGame from "@/components/games/MemoryGame";
@@ -18,11 +19,14 @@ const gameComponents: Record<string, React.FC> = {
 };
 
 const GamePlayPage = () => {
+  const { games, isLoading, isError, refetch } = useOfflineGames();
   const { slug } = useParams();
   const game = games.find((g) => g.slug === slug);
   const GameComponent = slug ? gameComponents[slug] : null;
 
-  if (!game || !GameComponent) {
+  if (isLoading || isError) return <CatalogStatus loading={isLoading} error={isError} retry={() => void refetch()} />;
+
+  if (!game) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -47,7 +51,7 @@ const GamePlayPage = () => {
             <p className="text-muted-foreground text-sm">{game.instructions}</p>
           </div>
           <div className="flex justify-center">
-            <GameComponent />
+            {GameComponent ? <GameComponent /> : <div className="text-center space-y-4"><p className="text-muted-foreground">This title is not installed on the website yet.</p><a className="text-primary hover:underline" href="https://wa.me/255693711597" target="_blank" rel="noopener noreferrer">Contact the owner about availability</a></div>}
           </div>
         </div>
       </div>

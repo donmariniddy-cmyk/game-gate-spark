@@ -26,11 +26,11 @@ const PricingPage = () => {
             <p className="text-muted-foreground max-w-lg mx-auto">No tricks. Pay once, play forever. All games included.</p>
           </div>
 
-          <div className="max-w-md mx-auto glass rounded-2xl p-10 neon-box">
+          <div className="max-w-md mx-auto glass rounded-2xl p-6 sm:p-10 neon-box">
             <div className="text-center mb-8">
               <span className="font-heading text-sm tracking-widest text-primary">LIFETIME ACCESS</span>
               <div className="mt-4">
-                <span className="font-heading text-7xl font-black neon-text">50,000</span>
+                <span className="font-heading text-5xl sm:text-6xl font-black neon-text">50,000</span>
                 <span className="font-heading text-2xl font-bold text-primary ml-2">TZS</span>
               </div>
               <p className="text-muted-foreground text-sm mt-2">One-time payment</p>
@@ -38,10 +38,10 @@ const PricingPage = () => {
 
             <ul className="space-y-4 mb-10">
               {[
-                "Instant access to all games",
+                "Access after owner approval",
                 "New games added for free",
-                "100% offline play",
-                "Zero advertisements",
+                "Browser games require internet",
+                "External games may show provider ads",
                 "Lifetime updates & support",
                 "Works on all devices",
               ].map((f) => (

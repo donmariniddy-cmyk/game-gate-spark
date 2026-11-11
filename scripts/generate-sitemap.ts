@@ -3,7 +3,7 @@
 import { writeFileSync } from "fs"
 import { resolve } from "path"
 
-const BASE_URL = "https://game-gate-spark.lovable.app"
+const BASE_URL = "https://naamsgames.lovable.app"
 
 interface SitemapEntry {
   path: string

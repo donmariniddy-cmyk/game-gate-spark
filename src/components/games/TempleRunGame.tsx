@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 const LANE_COUNT = 3;
 const GAME_WIDTH = 300;
@@ -64,6 +65,8 @@ const TempleRunGame = () => {
   useEffect(() => {
     if (!started || gameOver) return;
     const handleKey = (e: KeyboardEvent) => {
+      if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement).tagName)) return;
+      if (e.key.startsWith("Arrow")) e.preventDefault();
       if (e.key === "ArrowLeft" || e.key === "a") setPlayerLane((l) => Math.max(0, l - 1));
       if (e.key === "ArrowRight" || e.key === "d") setPlayerLane((l) => Math.min(2, l + 1));
       if (e.key === "ArrowUp" || e.key === "w") { setJumping(true); jumpPhase.current = 0; }
@@ -180,18 +183,11 @@ const TempleRunGame = () => {
     }
 
     // Check coins
-    setCoins((prev) =>
-      prev.map((c) => {
-        if (c.collected) return c;
-        const cx = c.lane * LANE_WIDTH + LANE_WIDTH / 2;
-        const cy = c.y;
-        if (Math.abs(playerX - cx) < (PLAYER_SIZE + COIN_SIZE) / 2 && Math.abs(playerY - cy) < (PLAYER_SIZE + COIN_SIZE) / 2) {
-          setCoinCount((cc) => cc + 1);
-          return { ...c, collected: true };
-        }
-        return c;
-      })
-    );
+    const collected = coins.filter(c => !c.collected && Math.abs(playerX - (c.lane * LANE_WIDTH + LANE_WIDTH / 2)) < (PLAYER_SIZE + COIN_SIZE) / 2 && Math.abs(playerY - c.y) < (PLAYER_SIZE + COIN_SIZE) / 2);
+    if (collected.length) {
+      setCoinCount(cc => cc + collected.length);
+      setCoins(prev => prev.map(c => collected.includes(c) ? { ...c, collected: true } : c));
+    }
   }, [obstacles, coins, playerLane, jumping, sliding, gameOver, started]);
 
   const playerX = playerLane * LANE_WIDTH + LANE_WIDTH / 2 - PLAYER_SIZE / 2;

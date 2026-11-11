@@ -1,14 +1,17 @@
+import { useBrowserGames } from "@/hooks/useCatalog";
+import CatalogStatus from "@/components/CatalogStatus";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { html5Games, categories } from "@/data/html5Games";
+import { categories, type Html5Game } from "@/data/html5Games";
 import { Search, Star, Flame, Sparkles, Gamepad2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 const BrowserGamesPage = () => {
+  const { games: html5Games, isLoading, isError, refetch } = useBrowserGames();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
@@ -20,7 +23,7 @@ const BrowserGamesPage = () => {
       const matchesCategory = activeCategory === "all" || g.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [search, activeCategory]);
+  }, [search, activeCategory, html5Games]);
 
   const popular = html5Games.filter((g) => g.isPopular);
   const newGames = html5Games.filter((g) => g.isNew);
@@ -38,9 +41,10 @@ const BrowserGamesPage = () => {
             </h1>
           </div>
           <p className="text-muted-foreground mb-8 max-w-lg">
-            Free HTML5 games — play instantly in your browser. No downloads, no logins.
+            HTML5 games • Account and owner approval required • Internet required.
           </p>
 
+          <CatalogStatus loading={isLoading} error={isError} retry={() => void refetch()} />
           {/* Search & Filters */}
           <div className="flex flex-col sm:flex-row gap-4 mb-10">
             <div className="relative flex-1 max-w-md">
@@ -119,7 +123,7 @@ const BrowserGamesPage = () => {
   );
 };
 
-function GameCard({ game }: { game: (typeof html5Games)[number] }) {
+function GameCard({ game }: { game: Omit<Html5Game, "category"> & { category: string } }) {
   return (
     <Link
       to={`/browser-games/${game.id}`}

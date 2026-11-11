@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,13 @@ const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  useEffect(() => {
+    void supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return;
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
+      if (data) navigate("/admin/dashboard", { replace: true });
+    });
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,10 +68,12 @@ const AdminLogin = () => {
 
         <form onSubmit={handleLogin} className="space-y-4 bg-card border border-border rounded-xl p-6">
           <div>
-            <label className="text-sm text-muted-foreground mb-1 block">Email</label>
+            <label htmlFor="admin-email" className="text-sm text-muted-foreground mb-1 block">Email</label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
               <Input
+                id="admin-email"
+                autoComplete="username"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -75,10 +84,12 @@ const AdminLogin = () => {
             </div>
           </div>
           <div>
-            <label className="text-sm text-muted-foreground mb-1 block">Password</label>
+            <label htmlFor="admin-password" className="text-sm text-muted-foreground mb-1 block">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
               <Input
+                id="admin-password"
+                autoComplete="current-password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -86,14 +97,14 @@ const AdminLogin = () => {
                 placeholder="••••••••"
                 required
               />
-              <button
+              <Button variant="ghost" size="icon"
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-0 top-0 text-muted-foreground"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+              </Button>
             </div>
           </div>
 

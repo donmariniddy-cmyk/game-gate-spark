@@ -2,12 +2,14 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GameCard from "@/components/GameCard";
-import { games } from "@/data/games";
+import { useOfflineGames } from "@/hooks/useCatalog";
+import CatalogStatus from "@/components/CatalogStatus";
 import { Zap, Shield, Wifi, WifiOff } from "lucide-react";
 import heroBmwVideo from "@/assets/hero-bmw-race.mp4";
 import mercedesDrift from "@/assets/mercedes-drift.jpg";
 
 const Index = () => {
+  const { games, isLoading, isError, refetch } = useOfflineGames();
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -76,8 +78,8 @@ const Index = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { icon: WifiOff, title: "100% Offline", desc: "No internet needed. Play anywhere, anytime." },
-              { icon: Shield, title: "One-Time Payment", desc: "Pay $20 once. No subscriptions, no hidden fees." },
-              { icon: Zap, title: "Instant Access", desc: "Start playing immediately after purchase." },
+              { icon: Shield, title: "One-Time Payment", desc: "Pay 50,000 TZS once. No subscriptions, no hidden fees." },
+              { icon: Zap, title: "Owner Activation", desc: "Play after the owner confirms payment and grants access." },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="glass rounded-lg p-8 text-center">
                 <div className="w-14 h-14 mx-auto mb-4 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -101,6 +103,7 @@ const Index = () => {
             <p className="text-muted-foreground max-w-lg mx-auto">Classic games reimagined with a neon twist. More games added regularly.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <CatalogStatus loading={isLoading} error={isError} retry={() => void refetch()} />
             {games.map((game) => (
               <GameCard key={game.slug} {...game} />
             ))}
@@ -118,7 +121,7 @@ const Index = () => {
               <p className="text-muted-foreground mt-2">One-time payment • Forever yours</p>
             </div>
             <ul className="text-left space-y-3 mb-8 text-sm">
-              {["All current & future games", "No ads, ever", "Works 100% offline", "Instant access", "Lifetime updates"].map((f) => (
+              {["All current & future games", "No ads, ever", "Works 100% offline", "Access after owner approval", "Lifetime updates"].map((f) => (
                 <li key={f} className="flex items-center gap-3 text-foreground">
                   <Zap className="w-4 h-4 text-primary flex-shrink-0" />
                   {f}

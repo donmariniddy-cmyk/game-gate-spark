@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AuthPage from "./pages/AuthPage";
 import GameAccessGate from "./components/GameAccessGate";
 import NotFound from "./pages/NotFound";
+import PageTracking from "./components/PageTracking";
 import Chatbot from "./components/Chatbot";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <PageTracking />
         <Chatbot />
       </BrowserRouter>
     </TooltipProvider>

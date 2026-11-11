@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,8 @@ import { toast } from "@/hooks/use-toast";
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = typeof location.state?.from === "string" && location.state.from.startsWith("/") && !location.state.from.startsWith("//") ? location.state.from : "/games";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -17,14 +19,14 @@ const AuthPage = () => {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/games");
+      if (session) navigate(from, { replace: true });
     });
-  }, [navigate]);
+  }, [navigate, from]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -35,6 +37,10 @@ const AuthPage = () => {
     setLoading(false);
     if (error) {
       toast({ title: "Sign up failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    if (!data.session) {
+      toast({ title: "Check your email", description: "Confirm your email address before signing in and requesting access." });
       return;
     }
     toast({
@@ -54,7 +60,7 @@ const AuthPage = () => {
       return;
     }
     toast({ title: "Welcome back!" });
-    navigate("/games");
+    navigate(from);
   };
 
   return (
@@ -169,14 +175,14 @@ const PasswordField = ({
         minLength={6}
         required
       />
-      <button
+      <Button variant="ghost" size="icon"
         type="button"
         onClick={() => setShow(!show)}
-        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
+        className="absolute right-0 top-0 text-muted-foreground"
         aria-label={show ? "Hide password" : "Show password"}
       >
         {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-      </button>
+      </Button>
     </div>
   </div>
 );
