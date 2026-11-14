@@ -6,12 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { games } from "@/data/games";
+import { libraryGrant, normalizeEmail } from "@/lib/catalog";
+import GameManager from "@/components/GameManager";
 import { Gamepad2, Users, CreditCard, BarChart3, Shield, LogOut, Plus, Check, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const [dataError, setDataError] = useState(false);
+  const [activeTab, setActiveTab] = useState("payments");
   const [profiles, setProfiles] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [gameAccess, setGameAccess] = useState<any[]>([]);
@@ -27,8 +30,7 @@ const AdminDashboard = () => {
   const [accessGame, setAccessGame] = useState("");
 
   useEffect(() => {
-    checkAuth();
-    fetchData();
+    void checkAuth();
   }, []);
 
   const checkAuth = async () => {
@@ -45,9 +47,10 @@ const AdminDashboard = () => {
       .maybeSingle();
 
     if (!roleData) {
-      await supabase.auth.signOut();
       navigate("/admin");
+      return;
     }
+    await fetchData();
   };
 
   const fetchData = async () => {
@@ -58,6 +61,13 @@ const AdminDashboard = () => {
       supabase.from("game_access").select("*").order("granted_at", { ascending: false }),
       supabase.from("site_visits").select("*").order("visited_at", { ascending: false }).limit(100),
     ]);
+    if ([profilesRes, paymentsRes, accessRes, visitsRes].some(result => result.error)) {
+      setDataError(true);
+      setLoading(false);
+      toast({ title: "Dashboard could not load", description: "Please try again.", variant: "destructive" });
+      return;
+    }
+    setDataError(false);
     setProfiles(profilesRes.data || []);
     setPayments(paymentsRes.data || []);
     setGameAccess(accessRes.data || []);
@@ -76,6 +86,7 @@ const AdminDashboard = () => {
       .from("payment_requests")
       .update({ status: "confirmed", confirmed_at: new Date().toISOString(), confirmed_by: session?.user.id })
       .eq("id", id);
+    if (error) toast({ title: "Payment confirmation failed", description: error.message, variant: "destructive" });
     if (!error) {
       toast({ title: "Payment confirmed!" });
       fetchData();
@@ -87,6 +98,7 @@ const AdminDashboard = () => {
       .from("payment_requests")
       .update({ status: "rejected" })
       .eq("id", id);
+    if (error) toast({ title: "Payment rejection failed", description: error.message, variant: "destructive" });
     if (!error) {
       toast({ title: "Payment rejected" });
       fetchData();
@@ -97,7 +109,8 @@ const AdminDashboard = () => {
     if (!newPaymentEmail) return;
     const { error } = await supabase
       .from("payment_requests")
-      .insert({ user_email: newPaymentEmail, user_name: newPaymentName || null });
+      .insert({ user_email: normalizeEmail(newPaymentEmail), user_name: newPaymentName || null, amount: 50000 });
+    if (error) toast({ title: "Payment request failed", description: error.message, variant: "destructive" });
     if (!error) {
       toast({ title: "Payment request added" });
       setNewPaymentEmail("");
@@ -111,7 +124,7 @@ const AdminDashboard = () => {
     const { data: { session } } = await supabase.auth.getSession();
     const { error } = await supabase
       .from("game_access")
-      .insert({ user_email: accessEmail, game_slug: accessGame, granted_by: session?.user.id });
+      .upsert({ user_email: normalizeEmail(accessEmail), game_slug: "all-games", granted_by: session?.user.id }, { onConflict: "user_email,game_slug" });
     if (!error) {
       toast({ title: `Access granted for ${accessGame}` });
       setAccessEmail("");
@@ -125,12 +138,9 @@ const AdminDashboard = () => {
   const grantAllAccess = async () => {
     if (!accessEmail) return;
     const { data: { session } } = await supabase.auth.getSession();
-    const inserts = games.map(g => ({
-      user_email: accessEmail,
-      game_slug: g.slug,
-      granted_by: session?.user.id,
-    }));
-    const { error } = await supabase.from("game_access").upsert(inserts, { onConflict: "user_email,game_slug" });
+    if (!session) return;
+    const { error } = await supabase.from("game_access").upsert(libraryGrant(accessEmail, session.user.id), { onConflict: "user_email,game_slug" });
+    if (error) toast({ title: "Grant failed", description: error.message, variant: "destructive" });
     if (!error) {
       toast({ title: `All games access granted for ${accessEmail}` });
       setAccessEmail("");
@@ -139,7 +149,10 @@ const AdminDashboard = () => {
   };
 
   const revokeAccess = async (id: string) => {
-    const { error } = await supabase.from("game_access").delete().eq("id", id);
+    const email = gameAccess.find(a => a.id === id)?.user_email;
+    if (!email) return;
+    const { error } = await supabase.from("game_access").delete().eq("user_email", email);
+    if (error) toast({ title: "Revoke failed", description: error.message, variant: "destructive" });
     if (!error) {
       toast({ title: "Access revoked" });
       fetchData();
@@ -210,18 +223,21 @@ const AdminDashboard = () => {
             <CardContent className="p-4 text-center">
               <BarChart3 className="w-6 h-6 text-primary mx-auto mb-1" />
               <div className="text-2xl font-heading font-bold text-foreground">{totalVisits}</div>
-              <div className="text-xs text-muted-foreground">Total Visits</div>
+              <div className="text-xs text-muted-foreground">Recent Visits (up to 100)</div>
             </CardContent>
           </Card>
         </div>
 
-        <Tabs defaultValue="payments" className="w-full">
-          <TabsList className="w-full grid grid-cols-4 mb-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full flex overflow-x-auto justify-start mb-4">
             <TabsTrigger value="payments">Payments</TabsTrigger>
             <TabsTrigger value="access">Game Access</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="games">Games</TabsTrigger>
           </TabsList>
+          {dataError && <div role="alert" className="mb-4 text-destructive">Dashboard data is unavailable. <Button variant="outline" onClick={() => void fetchData()}>Try again</Button></div>}
+          <TabsContent value="games"><GameManager /></TabsContent>
 
           {/* Payments Tab */}
           <TabsContent value="payments">
@@ -230,7 +246,7 @@ const AdminDashboard = () => {
                 <CardTitle className="text-lg">Add Payment Request</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col sm:flex-row gap-2">
-                <Input placeholder="User email" value={newPaymentEmail} onChange={e => setNewPaymentEmail(e.target.value)} />
+                <Input type="email" placeholder="User email" value={newPaymentEmail} onChange={e => setNewPaymentEmail(e.target.value)} />
                 <Input placeholder="User name (optional)" value={newPaymentName} onChange={e => setNewPaymentName(e.target.value)} />
                 <Button onClick={addPaymentRequest} className="shrink-0">
                   <Plus className="w-4 h-4 mr-1" /> Add
@@ -270,10 +286,10 @@ const AdminDashboard = () => {
                           {p.status === "pending" && (
                             <div className="flex gap-1">
                               <Button size="sm" variant="ghost" onClick={() => confirmPayment(p.id)}>
-                                <Check className="w-4 h-4 text-primary" />
+                                <Check className="w-4 h-4 text-primary" aria-label="Confirm payment" />
                               </Button>
                               <Button size="sm" variant="ghost" onClick={() => rejectPayment(p.id)}>
-                                <X className="w-4 h-4 text-destructive" />
+                                <X className="w-4 h-4 text-destructive" aria-label="Reject payment" />
                               </Button>
                             </div>
                           )}
@@ -296,16 +312,14 @@ const AdminDashboard = () => {
                 <CardTitle className="text-lg">Grant Game Access</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col sm:flex-row gap-2">
-                <Input placeholder="User email" value={accessEmail} onChange={e => setAccessEmail(e.target.value)} />
+                <Input type="email" placeholder="User email" value={accessEmail} onChange={e => setAccessEmail(e.target.value)} />
                 <select
                   className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
                   value={accessGame}
                   onChange={e => setAccessGame(e.target.value)}
                 >
-                  <option value="">Select game</option>
-                  {games.map(g => (
-                    <option key={g.slug} value={g.slug}>{g.title}</option>
-                  ))}
+                  <option value="">Select access</option>
+                  <option value="all-games">All Games</option>
                 </select>
                 <Button onClick={grantAccess} className="shrink-0">
                   <Plus className="w-4 h-4 mr-1" /> Grant
@@ -330,7 +344,7 @@ const AdminDashboard = () => {
                     {gameAccess.map(a => (
                       <TableRow key={a.id}>
                         <TableCell className="text-xs">{a.user_email}</TableCell>
-                        <TableCell>{games.find(g => g.slug === a.game_slug)?.title || a.game_slug}</TableCell>
+                        <TableCell>All Games</TableCell>
                         <TableCell className="text-xs">{new Date(a.granted_at).toLocaleDateString()}</TableCell>
                         <TableCell>
                           <Button size="sm" variant="ghost" onClick={() => revokeAccess(a.id)}>
@@ -364,7 +378,7 @@ const AdminDashboard = () => {
                   </TableHeader>
                   <TableBody>
                     {profiles.map(p => {
-                      const userGrants = gameAccess.filter(a => a.user_email === p.email);
+                      const userGrants = gameAccess.filter(a => normalizeEmail(a.user_email) === normalizeEmail(p.email));
                       const granted = userGrants.length > 0;
                       return (
                         <TableRow key={p.id}>
@@ -396,14 +410,10 @@ const AdminDashboard = () => {
                                 size="sm"
                                 onClick={async () => {
                                   const { data: { session } } = await supabase.auth.getSession();
-                                  const inserts = games.map(g => ({
-                                    user_email: p.email,
-                                    game_slug: g.slug,
-                                    granted_by: session?.user.id,
-                                  }));
+                                  if (!session) return;
                                   const { error } = await supabase
                                     .from("game_access")
-                                    .upsert(inserts, { onConflict: "user_email,game_slug" });
+                                    .upsert(libraryGrant(p.email, session.user.id), { onConflict: "user_email,game_slug" });
                                   if (!error) {
                                     toast({ title: `Access granted for ${p.email}` });
                                     fetchData();
@@ -434,7 +444,7 @@ const AdminDashboard = () => {
               <Card className="bg-card border-border">
                 <CardHeader><CardTitle className="text-lg">Overview</CardTitle></CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="flex justify-between"><span className="text-muted-foreground">Total Visits</span><span className="font-bold text-foreground">{totalVisits}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Recent Visits (up to 100)</span><span className="font-bold text-foreground">{totalVisits}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Today's Visits</span><span className="font-bold text-foreground">{todayVisits}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Total Users</span><span className="font-bold text-foreground">{profiles.length}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Confirmed Payments</span><span className="font-bold text-primary">{confirmedPayments}</span></div>

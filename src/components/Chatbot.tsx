@@ -33,6 +33,7 @@ const Chatbot = () => {
 
     try {
       const resp = await fetch(CHAT_URL, {
+        signal: AbortSignal.timeout(30000),
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,7 +105,7 @@ const Chatbot = () => {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full overflow-hidden shadow-[0_0_25px_rgba(0,100,255,0.6)] hover:shadow-[0_0_40px_rgba(0,100,255,0.9)] transition-all hover:scale-110 ring-2 ring-blue-500/60"
+          className="fixed top-24 right-4 sm:top-auto sm:bottom-6 sm:right-6 z-40 w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden shadow-[0_0_25px_rgba(0,100,255,0.6)] hover:shadow-[0_0_40px_rgba(0,100,255,0.9)] transition-all hover:scale-110 ring-2 ring-blue-500/60"
           aria-label="Open chat"
           style={{ animation: "wrx-pulse 2s ease-in-out infinite" }}
         >

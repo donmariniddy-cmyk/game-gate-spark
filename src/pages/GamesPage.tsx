@@ -30,7 +30,7 @@ const GamesPage = () => {
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-4">
               GAME <span className="neon-text">LIBRARY</span>
             </h1>
-            <p className="text-muted-foreground mb-12 max-w-lg">All games work offline. No internet, no ads, no nonsense.</p>
+            <p className="text-muted-foreground mb-12 max-w-lg">Owner approval required. Built-in classics are playable here; other titles list their availability.</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <CatalogStatus loading={isLoading} error={isError} retry={() => void refetch()} />
             {games.map((game) => (

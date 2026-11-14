@@ -15,6 +15,13 @@
       "when": 1793380556626,
       "tag": "0001_create_games_catalog",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794682019960,
+      "tag": "0002_secure_catalog_trigger_functions",
+      "breakpoints": true
     }
   ]
 }

@@ -34,8 +34,8 @@ const Index = () => {
             <span className="neon-text">LIMITS</span>
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            One-time 50,000 TZS access. No ads, no subscriptions, no internet required.
-            Premium offline games, forever yours.
+            One-time 50,000 TZS access after owner approval. No subscriptions.
+            Browse game availability; browser games require internet.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -77,7 +77,7 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: WifiOff, title: "100% Offline", desc: "No internet needed. Play anywhere, anytime." },
+              { icon: WifiOff, title: "Game Library", desc: "Built-in classics and browser games. Check each title’s availability." },
               { icon: Shield, title: "One-Time Payment", desc: "Pay 50,000 TZS once. No subscriptions, no hidden fees." },
               { icon: Zap, title: "Owner Activation", desc: "Play after the owner confirms payment and grants access." },
             ].map(({ icon: Icon, title, desc }) => (
@@ -121,7 +121,7 @@ const Index = () => {
               <p className="text-muted-foreground mt-2">One-time payment • Forever yours</p>
             </div>
             <ul className="text-left space-y-3 mb-8 text-sm">
-              {["All current & future games", "No ads, ever", "Works 100% offline", "Access after owner approval", "Lifetime updates"].map((f) => (
+              {["All available games", "External games may show ads", "Browser games require internet", "Access after owner approval", "Lifetime updates"].map((f) => (
                 <li key={f} className="flex items-center gap-3 text-foreground">
                   <Zap className="w-4 h-4 text-primary flex-shrink-0" />
                   {f}
