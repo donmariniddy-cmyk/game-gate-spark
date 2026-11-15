@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useBrowserGames } from "@/hooks/useCatalog";
 import CatalogStatus from "@/components/CatalogStatus";
 import Navbar from "@/components/Navbar";
-import { ArrowLeft, Star, Maximize2 } from "lucide-react";
+import { ArrowLeft, Star, Maximize2, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState, useRef, useEffect } from "react";
@@ -13,8 +13,15 @@ const BrowserGamePlayPage = () => {
   const game = html5Games.find((g) => g.id === id || (id === "snake" && g.id === "snake-html5") || (id === "tetris" && g.id === "block-puzzle"));
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState(false);
+  const [slow, setSlow] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
-  useEffect(() => { setLoaded(false); const timer = setTimeout(() => setLoaded(true), 15000); return () => clearTimeout(timer); }, [id]);
+  useEffect(() => {
+    setLoaded(false);
+    setSlow(false);
+    const timer = setTimeout(() => setSlow(true), 15000);
+    return () => clearTimeout(timer);
+  }, [id, attempt]);
   if (isLoading || isError) return <CatalogStatus loading={isLoading} error={isError} retry={() => void refetch()} />;
   if (!game) {
     return (
@@ -66,9 +73,9 @@ const BrowserGamePlayPage = () => {
           </div>
 
           {/* Game iframe */}
-          <div className="relative w-full rounded-lg overflow-hidden border border-border bg-card" style={{ minHeight: "70vh" }}>
-            {!loaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-card z-10">
+          <div className="relative w-full min-h-[70vh] rounded-lg overflow-hidden border border-border bg-card">
+            {!loaded && !slow && (
+              <div className="absolute inset-0 flex items-center justify-center bg-card z-10 pointer-events-none">
                 <div className="text-center">
                   <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                   <p className="text-muted-foreground font-heading text-sm">Loading game...</p>
@@ -76,11 +83,11 @@ const BrowserGamePlayPage = () => {
               </div>
             )}
             <iframe
+              key={`${id}-${attempt}`}
               ref={iframeRef}
               src={game.embedUrl}
               title={game.title}
-              className="w-full border-0"
-              style={{ height: "70vh" }}
+              className="w-full h-[70vh] border-0"
               allowFullScreen
               onLoad={() => setLoaded(true)}
               loading="lazy"
@@ -88,7 +95,8 @@ const BrowserGamePlayPage = () => {
             />
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-3"><Button variant="outline" onClick={() => { setLoaded(false); if (iframeRef.current) iframeRef.current.src = game.embedUrl; }}>Reload game</Button><span className="text-muted-foreground text-sm">External games need internet and may include provider advertisements.</span></div>
+          {slow && !loaded && <p role="status" className="mt-4 text-muted-foreground">The game provider is taking longer than expected. Check your connection or try reloading.</p>}
+          <div className="mt-4 flex flex-wrap items-center gap-3"><Button variant="outline" onClick={() => setAttempt(value => value + 1)}><RotateCw className="w-4 h-4 mr-2" />Reload game</Button><span className="text-muted-foreground text-sm">External games need internet and may include provider advertisements.</span></div>
           <p className="text-muted-foreground text-sm mt-4">{game.description}</p>
         </div>
       </div>
